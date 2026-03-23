@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GW Products – Mobile App Developer [Android] Assessment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0d0d0d;
+      --yellow: #F5D800;
+      --white: #ffffff;
+      --grey: #1a1a1a;
+      --danger: #ff4444;
+      --green: #22c55e;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid #222;
+      background: rgba(13,13,13,0.97);
+    }
+
+    .logo-area { display: flex; align-items: center; gap: 14px; }
+
+    .logo-circle {
+      width: 52px; height: 52px;
+      background: #111;
+      border-radius: 50%;
+      border: 2px solid #333;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .logo-circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+    .logo-text { display: flex; flex-direction: column; line-height: 1; }
+    .logo-text .brand { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--yellow); letter-spacing: 2px; }
+    .logo-text .tagline { font-size: 10px; color: #666; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+
+    .header-badge {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: #888;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    main {
+      position: relative;
+      z-index: 5;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    /* ── INTRO ── */
+    #intro-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 90px);
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .intro-tag {
+      display: inline-block;
+      background: rgba(245, 216, 0, 0.1);
+      border: 1px solid rgba(245, 216, 0, 0.3);
+      color: var(--yellow);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 100px;
+      margin-bottom: 32px;
+    }
+
+    #intro-screen h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(42px, 7vw, 72px);
+      letter-spacing: 3px;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    #intro-screen h1 span { color: var(--yellow); }
+
+    #intro-screen p {
+      font-size: 16px;
+      color: #888;
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 48px;
+    }
+
+    .rule-card {
+      background: #1a1a1a;
+      border: 1px solid #272727;
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    .rule-card .rule-icon { font-size: 24px; margin-bottom: 10px; display: block; }
+    .rule-card .rule-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .rule-card .rule-desc { font-size: 11px; color: #666; line-height: 1.5; }
+
+    #start-btn {
+      background: var(--yellow);
+      color: var(--black);
+      border: none;
+      padding: 18px 56px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #start-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(245,216,0,0.3); }
+    #start-btn:active { transform: translateY(0); }
+
+    .warning-text { margin-top: 20px; font-size: 12px; color: #555; }
+
+    /* ── QUIZ ── */
+    #quiz-screen {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .timer-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,13,13,0.97);
+      border-bottom: 1px solid #222;
+      padding: 16px 24px;
+      margin: 0 -24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .timer-left { display: flex; align-items: center; gap: 16px; }
+    .timer-display { display: flex; align-items: center; gap: 8px; }
+
+    .timer-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(245,216,0,0.12);
+      border: 1.5px solid rgba(245,216,0,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .timer-icon.warning  { background: rgba(255,68,68,0.12);  border-color: rgba(255,68,68,0.4); }
+    .timer-icon.success  { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.4); }
+
+    #countdown {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      color: var(--yellow);
+      letter-spacing: 4px;
+      min-width: 100px;
+      line-height: 1;
+      transition: color 0.3s ease;
+    }
+
+    #countdown.warning { color: var(--danger); animation: pulse 1s infinite; }
+    #countdown.success  { color: var(--green);  animation: none; }
+
+    .timer-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1.5px; }
+
+    .progress-wrap {
+      flex: 1;
+      height: 4px;
+      background: #222;
+      border-radius: 100px;
+      overflow: hidden;
+      max-width: 400px;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background: var(--yellow);
+      border-radius: 100px;
+      width: 100%;
+      transition: width 1s linear, background 0.5s ease;
+    }
+
+    #progress-bar.warning { background: var(--danger); }
+    #progress-bar.success  { background: var(--green); }
+
+    .timer-right { font-size: 12px; color: #555; text-align: right; white-space: nowrap; }
+
+    .form-container {
+      background: #1a1a1a;
+      border: 1px solid #272727;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .form-container iframe {
+      width: 100%;
+      min-height: 720px;
+      border: none;
+      display: block;
+      background: #fff;
+    }
+
+    /* ── SUBMITTED SCREEN ── */
+    #submitted-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 90px);
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .submitted-icon {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      background: rgba(34,197,94,0.1);
+      border: 2px solid rgba(34,197,94,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 50px;
+      margin-bottom: 32px;
+      animation: scalePop 0.55s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    #submitted-screen h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(44px, 7vw, 74px);
+      letter-spacing: 4px;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    #submitted-screen h2 span { color: var(--green); }
+
+    #submitted-screen .sub-msg {
+      font-size: 17px;
+      color: #888;
+      max-width: 480px;
+      line-height: 1.75;
+      margin-bottom: 44px;
+    }
+
+    #submitted-screen .sub-msg strong { color: var(--white); }
+
+    .info-cards {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .info-card {
+      background: #1a1a1a;
+      border: 1px solid #272727;
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 220px;
+    }
+
+    .info-card .ic-icon { font-size: 28px; }
+    .info-card .ic-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+    .info-card .ic-sub   { font-size: 12px; color: #666; }
+
+    /* time-taken badge */
+    .time-taken-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 13px;
+      color: var(--green);
+      margin-bottom: 36px;
+      font-weight: 600;
+    }
+
+    .powered-note { font-size: 12px; color: #444; }
+    .powered-note span { color: var(--yellow); }
+
+    /* ── TIMES UP ── */
+    #timesup-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 90px);
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .timesup-icon {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(255,68,68,0.1);
+      border: 2px solid rgba(255,68,68,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 44px;
+      margin-bottom: 32px;
+      animation: scalePop 0.5s ease;
+    }
+
+    #timesup-screen h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 8vw, 80px);
+      letter-spacing: 4px;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    #timesup-screen h2 span { color: var(--danger); }
+
+    #timesup-screen p {
+      font-size: 16px;
+      color: #777;
+      max-width: 440px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .result-card {
+      background: #1a1a1a;
+      border: 1px solid #272727;
+      border-radius: 12px;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .result-card .rc-icon { font-size: 32px; }
+    .result-card .rc-text .rc-title { font-weight: 700; font-size: 15px; color: var(--white); margin-bottom: 4px; }
+    .result-card .rc-text .rc-sub   { font-size: 13px; color: #666; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.5; }
+    }
+    @keyframes scalePop {
+      0%  { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100%{ transform: scale(1);   opacity: 1; }
+    }
+    @keyframes timerWarn {
+      0%,100% { box-shadow: 0 0 0 0   rgba(255,68,68,0); }
+      50%     { box-shadow: 0 0 0 8px rgba(255,68,68,0.1); }
+    }
+
+    .timer-wrapper.warning-anim { animation: timerWarn 1.5s infinite; }
+
+    @media (max-width: 640px) {
+      header { padding: 14px 20px; }
+      main   { padding: 24px 16px 48px; }
+      .rules-grid { grid-template-columns: 1fr; }
+      #countdown  { font-size: 28px; }
+      .timer-right { display: none; }
+      .info-cards  { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-area">
+      <div class="logo-circle">
+        <img src="gw_logo.jpg" alt="GW Products" onerror="this.style.display='none'" />
+      </div>
+      <div class="logo-text">
+        <span class="brand">GW Products</span>
+        <span class="tagline">Talent Assessment</span>
+      </div>
+    </div>
+    <div class="header-badge">Mobile App Developer [Android] &middot; MCQ Test</div>
+  </header>
+
+  <main>
+
+    <!-- ── INTRO ── -->
+    <div id="intro-screen">
+      <span class="intro-tag">📋 Candidate Assessment</span>
+      <h1>Ready to <span>Begin?</span></h1>
+      <p>This is a timed multiple-choice assessment for the <strong style="color:#fff">Mobile App Developer [Android]</strong> position at GW Products. Read every question carefully before answering.</p>
+
+      <div class="rules-grid">
+        <div class="rule-card">
+          <span class="rule-icon">⏱</span>
+          <div class="rule-title">10 Minutes</div>
+          <div class="rule-desc">Strict time limit. Form closes automatically when time is up.</div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">📵</span>
+          <div class="rule-title">No External Help</div>
+          <div class="rule-desc">Complete independently. No references or internet assistance.</div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">✅</span>
+          <div class="rule-title">Submit Early</div>
+          <div class="rule-desc">Finished early? Hit submit and the timer stops automatically.</div>
+        </div>
+      </div>
+
+      <button id="start-btn">START ASSESSMENT &#8594;</button>
+      <p class="warning-text">⚠️ Timer starts immediately when you click. You cannot pause it.</p>
+    </div>
+
+    <!-- ── QUIZ ── -->
+    <div id="quiz-screen">
+
+      <div class="timer-wrapper" id="timer-bar">
+        <div class="timer-left">
+          <div class="timer-display">
+            <div class="timer-icon" id="timer-icon">⏱</div>
+            <div>
+              <div id="countdown">10:00</div>
+              <div class="timer-label" id="timer-label">Remaining</div>
+            </div>
+          </div>
+        </div>
+        <div class="progress-wrap">
+          <div id="progress-bar"></div>
+        </div>
+        <div class="timer-right">
+          Mobile App Developer [Android]<br/>
+          <span style="color:#444">Assessment &middot; GW Products</span>
+        </div>
+      </div>
+
+      <div class="form-container">
+        <iframe
+          id="quiz-iframe"
+          src="https://docs.google.com/forms/d/e/1FAIpQLScbX1IYebxyChLdjXHHHM5wFQvVfot02NSMBMvJtKHKEkRktQ/viewform?embedded=true"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0">
+          Loading assessment...
+        </iframe>
+      </div>
+    </div>
+
+    <!-- ── SUBMITTED EARLY ── -->
+    <div id="submitted-screen">
+      <div class="submitted-icon">🎉</div>
+      <h2>Thanks for your <span>Submission!</span></h2>
+      <p class="sub-msg">
+        Your assessment has been received. Our team will carefully review your answers and <strong>get back to you within 1–2 business days</strong> with an update.
+      </p>
+
+      <div class="time-taken-badge" id="time-taken-badge">
+        ⚡ Completed in — 
+      </div>
+
+      <div class="info-cards">
+        <div class="info-card">
+          <div class="ic-icon">📬</div>
+          <div>
+            <div class="ic-title">Responses Saved</div>
+            <div class="ic-sub">Your answers are securely recorded in our system.</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">📅</div>
+          <div>
+            <div class="ic-title">What's Next?</div>
+            <div class="ic-sub">Expect an update within 1–2 business days.</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="powered-note">Assessment by <span>GW Products</span> &middot; recruitment@gwproductsusa.com</p>
+    </div>
+
+    <!-- ── TIMES UP ── -->
+    <div id="timesup-screen">
+      <div class="timesup-icon">⛔</div>
+      <h2>Time's <span>Up!</span></h2>
+      <p>Your 10 minutes have ended. The assessment form has been closed. If you submitted before the timer ended, your responses have been recorded.</p>
+      <div class="result-card">
+        <div class="rc-icon">📬</div>
+        <div class="rc-text">
+          <div class="rc-title">Check Your Submission</div>
+          <div class="rc-sub">If you hit submit before time ran out, your answers are safely saved. Our team will be in touch within 1–2 business days.</div>
+        </div>
+      </div>
+      <p class="powered-note">Assessment by <span>GW Products</span> &middot; recruitment@gwproductsusa.com</p>
+    </div>
+
+  </main>
+
+  <script>
+    var TOTAL_SECONDS = 600;
+    var secondsLeft   = TOTAL_SECONDS;
+    var timerInterval = null;
+    var started       = false;
+    var finished      = false;
+    var iframeLoaded  = false; // track first load vs submission reload
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('start-btn').addEventListener('click', startQuiz);
+
+      // Detect form submission via iframe reload
+      // Google Forms reloads the iframe to a "formResponse" page after submit
+      var iframe = document.getElementById('quiz-iframe');
+
+      iframe.addEventListener('load', function () {
+        if (!started || finished) return;
+
+        if (!iframeLoaded) {
+          // First load = form just loaded, ignore
+          iframeLoaded = true;
+          return;
+        }
+
+        // Second load = form was submitted — show thank you
+        handleEarlySubmission();
+      });
+    });
+
+    function startQuiz() {
+      if (started) return;
+      started = true;
+      document.getElementById('intro-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display  = 'flex';
+      timerInterval = setInterval(tick, 1000);
+    }
+
+    function tick() {
+      secondsLeft--;
+      updateDisplay();
+      if (secondsLeft <= 0) {
+        clearInterval(timerInterval);
+        showTimesUp();
+      }
+    }
+
+    function updateDisplay() {
+      var mins = Math.floor(secondsLeft / 60);
+      var secs = secondsLeft % 60;
+      document.getElementById('countdown').textContent =
+        (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+
+      document.getElementById('progress-bar').style.width =
+        ((secondsLeft / TOTAL_SECONDS) * 100) + '%';
+
+      if (secondsLeft <= 120) {
+        document.getElementById('countdown').classList.add('warning');
+        document.getElementById('progress-bar').classList.add('warning');
+        document.getElementById('timer-icon').classList.add('warning');
+        document.getElementById('timer-icon').textContent = '⚠️';
+        document.getElementById('timer-bar').classList.add('warning-anim');
+      }
+    }
+
+    function handleEarlySubmission() {
+      if (finished) return;
+      finished = true;
+      clearInterval(timerInterval);
+
+      // Work out time taken
+      var elapsed    = TOTAL_SECONDS - secondsLeft;
+      var takenMins  = Math.floor(elapsed / 60);
+      var takenSecs  = elapsed % 60;
+      var takenStr   = takenMins > 0
+        ? takenMins + ' min ' + takenSecs + ' sec'
+        : takenSecs + ' sec';
+
+      // Update badge
+      document.getElementById('time-taken-badge').textContent =
+        '⚡ Completed in ' + takenStr;
+
+      // Flip countdown to green "DONE"
+      var cd = document.getElementById('countdown');
+      cd.classList.remove('warning');
+      cd.classList.add('success');
+      cd.textContent = 'DONE';
+      document.getElementById('timer-label').textContent = 'Submitted';
+      document.getElementById('timer-icon').classList.add('success');
+      document.getElementById('timer-icon').textContent = '✅';
+      document.getElementById('progress-bar').classList.add('success');
+
+      // Short delay so candidate sees the green "DONE" flash, then swap screens
+      setTimeout(function () {
+        document.getElementById('quiz-screen').style.display      = 'none';
+        document.getElementById('quiz-iframe').src                = 'about:blank';
+        document.getElementById('submitted-screen').style.display = 'flex';
+      }, 1200);
+    }
+
+    function showTimesUp() {
+      if (finished) return;
+      finished = true;
+      document.getElementById('quiz-screen').style.display  = 'none';
+      document.getElementById('quiz-iframe').src            = 'about:blank';
+      document.getElementById('timesup-screen').style.display = 'flex';
+    }
+  </script>
+
+</body>
+</html>
